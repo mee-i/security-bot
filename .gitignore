@@ -1,0 +1,8 @@
+# Based on https://raw.githubusercontent.com/github/gitignore/main/Node.gitignore
+
+node_modules/
+auth_info_baileys/
+link-data.json
+baileys_store.json
+.env
+bot.log

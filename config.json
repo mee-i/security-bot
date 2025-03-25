@@ -1,0 +1,11 @@
+{
+  "CommandOptions": {
+    "COMMAND-PREFIXES": [
+      "/",
+      ".",
+      "!"
+    ],
+    "PRIVATE-ONLY": [],
+    "GROUP-ONLY": []
+  }
+}
