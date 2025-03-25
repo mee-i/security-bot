@@ -1,6 +1,9 @@
+import { sleep } from "bun";
+
 const {
   DisconnectReason,
   useMultiFileAuthState,
+  single
 } = require("baileys");
 const makeWASocket = require("baileys").default;
 
@@ -33,10 +36,12 @@ async function WhatsappEvent() {
     auth: state,
     cachedGroupMetadata: async (jid) => {
       if (groupCache.has(jid)) {
-        return groupCache.get(jid)
+        return groupCache.get(jid);
       }
-      const groupMetadata = await sock.groupMetadata(jid)
-      groupCache.set(jid, groupMetadata)
+      const groupMetadata = await sock.groupMetadata(jid);
+      console.log("Getting metadata, sleeping for 1s");
+      await sleep(1000);
+      groupCache.set(jid, groupMetadata);
       return groupMetadata;
     },
     keepAliveIntervalMs: 60_000,
