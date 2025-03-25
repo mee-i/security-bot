@@ -32,15 +32,13 @@ async function WhatsappEvent() {
     // can provide additional config here
     printQRInTerminal: true,
 		// shouldSyncHistoryMessage: false,
-    syncFullHistory: true,
+    syncFullHistory: false,
     auth: state,
     cachedGroupMetadata: async (jid) => {
       if (groupCache.has(jid)) {
         return groupCache.get(jid);
       }
       const groupMetadata = await sock.groupMetadata(jid);
-      console.log("Getting metadata, sleeping for 1s");
-      await sleep(1000);
       groupCache.set(jid, groupMetadata);
       return groupMetadata;
     },
