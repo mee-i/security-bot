@@ -42,7 +42,7 @@ async function WhatsappEvent() {
       groupCache.set(jid, groupMetadata);
       return groupMetadata;
     },
-    keepAliveIntervalMs: 60_000,
+    keepAliveIntervalMs: 1000,
 
     // getMessage: async (key) => await getMessageFromStore(key)
     getMessage: async (message) => await store.loadMessage(message.remoteJid, message.id),
