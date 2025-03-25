@@ -31,7 +31,14 @@ async function WhatsappEvent() {
 		// shouldSyncHistoryMessage: false,
     // syncFullHistory: false,
     auth: state,
-    cachedGroupMetadata: async (jid) => groupCache.get(jid),
+    cachedGroupMetadata: async (jid) => {
+      if (groupCache.has(jid)) {
+        return groupCache.get(jid)
+      }
+      const groupMetadata = await sock.groupMetadata(jid)
+      groupCache.set(jid, groupMetadata)
+      return groupMetadata;
+    },
     // getMessage: async (key) => await getMessageFromStore(key)
     getMessage: async (message) => await store.loadMessage(message.remoteJid, message.id),
   });
