@@ -29,7 +29,7 @@ async function WhatsappEvent() {
     // can provide additional config here
     printQRInTerminal: true,
 		// shouldSyncHistoryMessage: false,
-    // syncFullHistory: false,
+    syncFullHistory: true,
     auth: state,
     cachedGroupMetadata: async (jid) => {
       if (groupCache.has(jid)) {
@@ -39,6 +39,8 @@ async function WhatsappEvent() {
       groupCache.set(jid, groupMetadata)
       return groupMetadata;
     },
+    keepAliveIntervalMs: 60_000,
+
     // getMessage: async (key) => await getMessageFromStore(key)
     getMessage: async (message) => await store.loadMessage(message.remoteJid, message.id),
   });
