@@ -11,7 +11,8 @@ A simple logging link when detecting message with link
 
 ## TODO
 - [ ] Auto Join Group
-- [ ] Auto Log When Join Group 
+- [ ] Auto Log When Join Group
+- [ ] Implement SQL Auth
 
 ## Installation
 
