@@ -13,6 +13,7 @@ A simple logging link when detecting message with link
 - [ ] Auto Join Group
 - [ ] Auto Log When Join Group
 - [ ] Implement SQL Auth
+- [ ] Add owner only to specifiec commands
 
 ## Installation
 
