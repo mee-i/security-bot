@@ -1,52 +1,68 @@
-import { sleep } from "bun";
 
 const {
   DisconnectReason,
-  useMultiFileAuthState,
-  single
+  fetchLatestBaileysVersion,
+  makeCacheableSignalKeyStore
 } = require("baileys");
 const makeWASocket = require("baileys").default;
+const figlet = require("figlet");
+const { useMySQLAuthState } = require("mysql-baileys");
+const NodeCache = require( "node-cache" );
+const pino = require('pino')
+
 
 const WAEvents = require("./core/events.js");
 const store = require("./core/memory-store.js");
-
 const colors = require("./utilities/colors.js");
 const Terminal = require("./utilities/terminal.js");
-
-const figlet = require("figlet");
 const { LoadMenu } = require("./load-menu.js");
-const NodeCache = require( "node-cache" );
-
 
 store.readFromFile("./baileys_store.json");
 
 setInterval(() => {
   store.writeToFile("./baileys_store.json");
 }, 10_000);
-const groupCache = new NodeCache({stdTTL: 5 * 60, useClones: false})
+const logger = pino(pino.destination('./log'))
 
-async function WhatsappEvent() {
+async function WhatsappEvent(sessionName = "session") {
   await LoadMenu();
-  const { state, saveCreds } = await useMultiFileAuthState("auth_info_baileys");
+  // const { state, saveCreds } = await useMultiFileAuthState("auth_info_baileys");
+	const { error, version } = await fetchLatestBaileysVersion();
+
+  const groupCache = new NodeCache({stdTTL: 3 * 60, useClones: false})
+
+	if (error){
+		console.log(`Session: ${sessionName} | No connection, check your internet.`)
+		return startSock(sessionName)
+	}
+
+	const { state, saveCreds, removeCreds } = await useMySQLAuthState({
+		session: sessionName,
+		host: 'localhost',
+		port: 3306,
+		user: 'root',
+    // password: 'password',
+		database: 'bot',
+		table: 'auth',
+  });
+
   const sock = makeWASocket({
-    // can provide additional config here
     printQRInTerminal: true,
 		// shouldSyncHistoryMessage: false,
     syncFullHistory: false,
-    auth: state,
-    cachedGroupMetadata: async (jid) => {
-      if (groupCache.has(jid)) {
-        return groupCache.get(jid);
-      }
-      const groupMetadata = await sock.groupMetadata(jid);
-      groupCache.set(jid, groupMetadata);
-      return groupMetadata;
-    },
-    keepAliveIntervalMs: 1000,
+    auth: {
+			creds: state.creds,
+			keys: makeCacheableSignalKeyStore(state.keys, logger),
+		},
+		version: version,
+		defaultQueryTimeoutMs: undefined,
+    cachedGroupMetadata: async (jid) => groupCache.get(jid),
+    // keepAliveIntervalMs: 1000,
 
     // getMessage: async (key) => await getMessageFromStore(key)
-    getMessage: async (message) => await store.loadMessage(message.remoteJid, message.id),
+    getMessage: async (key) => await store.loadMessage(key.remoteJid, key.id)
   });
+
   sock.ev.on('groups.update', async ([event]) => {
     const metadata = await sock.groupMetadata(event.id)
     groupCache.set(event.id, metadata)

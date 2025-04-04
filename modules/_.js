@@ -4,6 +4,6 @@ module.exports = {
   init: () => {
     const DbFile = "./database/link-data.json";
     if (!fs.existsSync(DbFile))
-      fs.writeFileSync(DbFile, JSON.stringify({}), "utf-8");
+      fs.writeFileSync(DbFile, JSON.stringify({LinkList: [], GroupList: []}), "utf-8");
   }
 }

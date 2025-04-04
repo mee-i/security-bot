@@ -61,6 +61,7 @@ async function Command(command, isGroup, sock, data) {
 
     if (CommandWithoutPrefix == "enablebot" && isOwner) {
         enable_bot = true;
+        console.log("Bot enabled!");
         await sock.sendMessage(data?.key?.remoteJid, { text: "Bot telah diaktifkan!"});
         return true;
     }

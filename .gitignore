@@ -2,7 +2,8 @@
 
 node_modules/
 auth_info_baileys/
-database/link-data.json
+database/*
 baileys_store.json
 .env
 bot.log
+log
