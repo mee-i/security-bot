@@ -12,9 +12,34 @@ A simple logging link when detecting message with link
 ## TODO
 - [ ] Auto Join Group
 - [ ] Auto Log When Join Group
-- [ ] Implement SQL Auth
-- [ ] Add owner only to specifiec commands
+- [x] Implement SQL Auth
+- [x] Add owner only to specifiec commands
 
+## MySQL Installation
+See [MySQL For Baileys](https://github.com/bobslavtriev/mysql-baileys)
+1. Create table in MySQL (optional)
+   ```sql
+      CREATE TABLE `auth` (
+      `session` varchar(50) NOT NULL,
+      `id` varchar(100) NOT NULL,
+      `value` json DEFAULT NULL,
+      UNIQUE KEY `idxunique` (`session`,`id`),
+      KEY `idxsession` (`session`),
+      KEY `idxid` (`id`)
+   ) ENGINE=MyISAM
+   ```
+2. Setup your database in index.js
+   ```js
+   const { state, saveCreds, removeCreds } = await useMySQLAuthState({
+		session: sessionName,
+		host: 'localhost',
+		port: 3306,
+		user: 'root',
+      // password: 'password',
+		database: 'bot',
+		table: 'auth',
+   });
+   ```
 ## Installation
 
 1. Install Bun, Git:
